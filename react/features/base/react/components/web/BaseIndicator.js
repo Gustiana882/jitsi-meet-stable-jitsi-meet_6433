@@ -1,10 +1,10 @@
 /* @flow */
 
+import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
-import { Icon } from '../../../icons';
-import { Tooltip } from '../../../tooltip';
+import { Icon, IconImage } from '../../../icons';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
@@ -37,7 +37,7 @@ type Props = {
     iconSize: string,
 
     /**
-     * The ID attribute to set on the root element of the component.
+     * The ID attribue to set on the root element of the component.
      */
     id: string,
 
@@ -92,7 +92,9 @@ class BaseIndicator extends Component<Props> {
             id,
             t,
             tooltipKey,
-            tooltipPosition
+            tooltipPosition,
+            iconImage,
+            indicatorMuted
         } = this.props;
         const iconContainerClassName = `indicator-icon-container ${className}`;
         const style = {};
@@ -109,11 +111,21 @@ class BaseIndicator extends Component<Props> {
                     <span
                         className = { iconContainerClassName }
                         id = { id }>
-                        <Icon
-                            className = { iconClassName }
-                            id = { iconId }
-                            src = { icon }
-                            style = { style } />
+                        {iconImage
+                        ?
+                            <IconImage
+                                className = { iconClassName }
+                                id = { iconId }
+                                src = { iconImage }
+                                indicatorMuted = { indicatorMuted }
+                                style = { style } />
+                        :
+                            <Icon
+                                className = { iconClassName }
+                                id = { iconId }
+                                src = { icon }
+                                style = { style } />
+                        }
                     </span>
                 </Tooltip>
             </div>

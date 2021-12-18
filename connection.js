@@ -17,8 +17,8 @@ import {
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
-import { getCustomerDetails } from './react/features/jaas/actions.any';
-import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
+// import { getCustomerDetails } from './react/features/jaas/actions.any';
+// import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 const logger = Logger.getLogger(__filename);
 
@@ -89,16 +89,16 @@ export async function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const state = APP.store.getState();
     let { jwt } = state['features/base/jwt'];
-    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+    // const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
-    if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
-        await APP.store.dispatch(getCustomerDetails());
+    // if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
+    //     await APP.store.dispatch(getCustomerDetails());
 
-        if (!jwt) {
-            jwt = await getJaasJWT(state);
-            APP.store.dispatch(setJWT(jwt));
-        }
-    }
+    //     if (!jwt) {
+    //         jwt = await getJaasJWT(state);
+    //         APP.store.dispatch(setJWT(jwt));
+    //     }
+    // }
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
     // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
