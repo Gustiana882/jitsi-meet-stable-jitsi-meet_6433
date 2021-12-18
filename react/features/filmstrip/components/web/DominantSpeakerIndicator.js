@@ -35,13 +35,13 @@ class DominantSpeakerIndicator extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        return (
+        return (        
             <BaseIndicator
-                className = 'indicator show-inline'
-                icon = { IconDominantSpeaker }
-                iconClassName = 'indicatoricon'
-                iconSize = { `${this.props.iconSize}px` }
+                className = 'indicator show-inline toolbar-icon'
                 id = 'dominantspeakerindicator'
+                iconClassName = 'indicatoricon'
+                icon = { IconDominantSpeaker }
+                iconSize = { 8 }
                 tooltipKey = 'speaker'
                 tooltipPosition = { this.props.tooltipPosition } />
         );
