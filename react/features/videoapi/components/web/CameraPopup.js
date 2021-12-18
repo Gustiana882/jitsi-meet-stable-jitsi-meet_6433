@@ -22,6 +22,13 @@ import { openSettingsDialog } from '../../../settings';
 import InlineDialog from './InlineDialog';
 import { setAudioOnly } from '../../../base/audio-only';
 import UIEvents from '../../../../../service/UI/UIEvents';
+import {
+    getVideoDeviceIds,
+    setVideoInputDeviceAndUpdateSettings
+} from '../../../base/devices';
+import { getCurrentCameraDeviceId } from '../../../base/settings';
+import VideoSettingsContent, { type Props as VideoSettingsProps } from '../../../../features/settings/components/web/video/VideoSettingsContent.js';
+import { toggleVideoSettings } from '../../../settings/actions';
 
 declare var APP: Object;
 
@@ -55,9 +62,15 @@ function CameraPopup({
     // new
     _audioOnly,
     _videoMediaType,
-    _videoMuted
+    _videoMuted,
+    videoDeviceIds,
+    currentCameraDeviceId,
+    onClose,
+    setVideoInputDevice
+
 }: Props) {
     const [ isOpen, setIsOpen ] = useState(false);
+    const [ visibleSelectCamera, setVisibleSelectCamera ] = useState(false);
 
     const text = (isMuted) => {
         const text = isMuted ? t('toolboxTitle.videoOn') : t('toolboxTitle.videoOff');
@@ -82,11 +95,21 @@ function CameraPopup({
                     <li
                         className = 'overflow-menu-item'
                         key = 'select-camera'
-                        onClick = { () => console.log("Select camera") }>
+                        onClick = { () => setVisibleSelectCamera(!visibleSelectCamera) }>
                         <div className = 'overflow-menu-item-text'>
                             {t('toolboxTitle.selectCamera')}
                         </div>
                     </li>
+                    {visibleSelectCamera && (
+                        <VideoSettingsContent
+                            dispatch = { dispatch }
+                            currentCameraDeviceId = { currentCameraDeviceId }
+                            setVideoInputDevice = { setVideoInputDevice }
+                            toggleVideoSettings = { onClose }
+                            videoDeviceIds = { videoDeviceIds }
+                        />      
+                    )}
+
                     <li
                         className = 'overflow-menu-item'
                         key = 'camera-settings'
@@ -137,7 +160,11 @@ function mapStateToProps(state) {
         _videoMuted: muted || isLocalCameraTrackMuted(tracks),
         fullScreen,
         lonelyMeeting,
-        tileViewEnabled
+        tileViewEnabled,
+        videoDeviceIds: getVideoDeviceIds(state),
+        currentCameraDeviceId: getCurrentCameraDeviceId(state),
+        onClose: toggleVideoSettings,
+        setVideoInputDevice: setVideoInputDeviceAndUpdateSettings
     };
 }
 

@@ -5,7 +5,15 @@ let meetingId = '';
 let myId = '';
 let myName = '';
 let quality = 720;
-let videoAPIURL = 'https://console-staging.ngagevideoapi.com';
+// let videoAPIURL = 'https://console.ngagevideoapi.com';
+let videoAPIURL = 'https://console.videoapi.liveprod.cloud';
+let constraint = {    
+    status: false,
+    text: {
+        t1: '',
+        t2: ''
+    },
+};
 
 /* eslint-disable require-jsdoc */
 
@@ -51,8 +59,14 @@ export function getMyName() {
 /* eslint-disable require-jsdoc */
 export function setRoom(newRoom) {
     if (newRoom) {
-        room = newRoom.replace(`${getAPIID()}-`, '');
+        const checkRoom = newRoom.split('-');
+        if (checkRoom.length > 4) {
+            setRoom(room)
+            return;
+        }        
 
+        room = newRoom.trim().replace(`${getAPIID()}-`, '').replace(`-${getAPIKey}`, '');
+        
         if (room === 'null') {
             room = '';
         }
@@ -99,4 +113,24 @@ export function setVideoAPIURL(url) {
 /* eslint-disable require-jsdoc */
 export function getVideoAPIURL() {
     return videoAPIURL;
+}
+
+/* eslint-disable require-jsdoc */
+export function setConstraint(status, text) {
+    const { t1, t2 } = text;
+    constraint['status'] = status;
+    constraint['text'] = {
+        t1,
+        t2
+    };
+
+    localStorage.setItem('constraint', JSON.stringify(constraint))
+}
+
+export function getConstraint() {
+    const c = localStorage.getItem('constraint');
+    if (c) {
+        return JSON.parse(c);
+    }
+    return constraint;
 }

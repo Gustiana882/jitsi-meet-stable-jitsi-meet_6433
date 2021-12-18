@@ -1,4 +1,5 @@
 import LibVideoAPI from '../base/lib-jitsi-meet';
+import { getAPIID, getAPIKey, getVideoAPIURL } from './api';
 
 
 /* eslint-disable require-jsdoc */
@@ -17,7 +18,7 @@ export function getDevices() {
 /* eslint-disable require-jsdoc */
 export function getLocality() {
     try {
-        return fetch('http://geolocation-db.com/json/')
+        return fetch('https://geolocation-db.com/json/')
         .then(response => response.json());
     } catch (e) {
         return {
@@ -43,21 +44,27 @@ export function getAPIInfo() {
     if (!window.location) {
         return;
     }
-    const apiIDs = window.location.pathname.substring(1).split('-');
+    const pathname = window.location.pathname.replace('apiKey', '-');
+    const apiIDs = pathname.substring(1).split('-');
+    
 
     let params = {};
 
-    if (window.location.search) {
-        const paramsStr =`{"${window.location.search.replace(/%22/g, '').replace(/&/g, '","').replace(/=/g,'":"')}"}`
+    if (window.location.search || window.location.hash) {
+        const x = window.location.search || window.location.hash;
+
+        const paramsStr =`{"${x.replace(/%22/g, '').replace(/&/g, '","').replace(/=/g,'":"')}"}`
         params = JSON.parse(paramsStr,
             function(key, value) { return key===""?value:decodeURIComponent(value) });
     }
 
     const data = {
         apiID: '',
-        apiKey: params['apiKey'],
+        apiKey: params['apiKey'] || '',
         roomName: ''
     }
+
+
 
     if (window.location.host === 'room.videoapi') {
         data.apiKey = '00000000-0000-0000-0000-000000000000';
@@ -79,19 +86,90 @@ export function getAPIInfo() {
             if (i < 4) {
                 data.apiID = `${data.apiID}-`;
             }
-            if (i >= 5 && i < apiIDs.length) {
+            if (i === 5) {
                 data.roomName = data.roomName + item;
             }
-            if (i >= 5 && i < apiIDs.length - 1) {
-                data.roomName = `${data.roomName}-`;
+            if (i >= 6 && i <= apiIDs.length - 1) {                                
+                data.apiKey = `${data.apiKey}-` + item;
+                if (i === 6) {
+                    data.apiKey = data.apiKey.replace('-', '');
+                }
             }
-
         });
     }
     if (data.apiID === '') {
         data.apiID = 'default';
     }
 
+    if (apiIDs && apiIDs.length > 0) {
+        for (let i in apiIDs) {
+            if (apiIDs[i].toUpperCase() === 'TEST') {
+                data.apiID = 'TEST';
+                break;
+            }
+        }
+    }
+
     return data;
 }
 
+export async function checkRoomIsValid() {
+    const videoAPIURL = getVideoAPIURL();
+    const apiID = `${getAPIID()}`.replace('%7D', '');
+    return fetch(`${videoAPIURL}/api/tenant/check-room/${apiID}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(ret => {  
+        if (!ret.ok) {
+            return false;
+        }
+        return ret.json();
+    })
+    .catch(e => {
+        console.log(e);
+        return false;
+    });
+}
+
+export async function checkTenant() {
+    const videoAPIURL = getVideoAPIURL();
+    return fetch(`${videoAPIURL}/api/tenant/check/${getAPIID()}/${getAPIKey()}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(ret => {  
+        if (!ret.ok) {
+            return false;
+        }
+        return ret.json();
+    })
+    .catch(e => {
+        console.log(e);
+        return false;
+    });
+}
+
+export async function checkExpiredTenantPackage() {
+    const videoAPIURL = getVideoAPIURL();
+    return fetch(`${videoAPIURL}/api/tenant/check-package-expired/${getAPIID()}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(ret => {  
+        if (!ret.ok) {
+            return false;
+        }
+        return ret.json();
+    })
+    .catch(e => {
+        console.log(e);
+        return false;
+    });
+}

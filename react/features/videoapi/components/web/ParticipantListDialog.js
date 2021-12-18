@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { DISPLAY_NAME_CHANGED, TRACK_MUTE_CHANGED, USER_JOINED, USER_LEFT, USER_ROLE_CHANGED } from '../../../../../../lib-jitsi-meet/VideoAPIConferenceEvents';
+// import { DISPLAY_NAME_CHANGED, TRACK_MUTE_CHANGED, USER_JOINED, USER_LEFT, USER_ROLE_CHANGED } from '../../../../../../lib-jitsi-meet/VideoAPIConferenceEvents';
+import { DISPLAY_NAME_CHANGED, TRACK_MUTE_CHANGED, USER_JOINED, USER_LEFT, USER_ROLE_CHANGED } from '../../../../../node_modules/lib-jitsi-meet/JitsiConferenceEvents';
 import { Avatar } from '../../../base/avatar';
 import { getCurrentConference } from '../../../base/conference';
 import { Dialog } from '../../../base/dialog';
